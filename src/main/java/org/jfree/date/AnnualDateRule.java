@@ -47,7 +47,7 @@ package org.jfree.date;
 /**
  * The base class for all 'annual' date rules: that is, rules for generating
  * one date for any given year.
- * <P>
+ * <p>
  * One example is Easter Sunday (which can be calculated using published algorithms).
  *
  * @author David Gilbert
@@ -63,20 +63,18 @@ public abstract class AnnualDateRule implements Cloneable {
     /**
      * Returns the date for this rule, given the year.
      *
-     * @param year  the year (1900 &lt;= year &lt;= 9999).
-     *
+     * @param year the year (1900 &lt;= year &lt;= 9999).
      * @return the date for this rule, given the year.
      */
-    public abstract SerialDate getDate(int year);
+    public abstract DayDate getDate(int year);
 
     /**
      * Returns a clone of the rule.
-     * <P>
+     * <p>
      * You should refer to the documentation of the clone() method in each
      * subclass for exact details.
      *
      * @return a clone of the rule.
-     *
      * @throws CloneNotSupportedException if the rule is not clonable.
      */
     public Object clone() throws CloneNotSupportedException {

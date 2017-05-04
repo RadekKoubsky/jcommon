@@ -47,25 +47,15 @@
 
 package org.jfree.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import org.jfree.daydate.DateUtil;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-
-import org.jfree.date.SerialDate;
 
 /**
  * A panel that allows the user to select a date.
@@ -77,7 +67,7 @@ public class DateChooserPanel extends JPanel implements ActionListener {
     /**
      * The date selected in the panel.
      */
-    private Calendar chosenDate;
+    private final Calendar chosenDate;
 
     /**
      * The color for the selected date.
@@ -97,7 +87,7 @@ public class DateChooserPanel extends JPanel implements ActionListener {
     /**
      * The first day-of-the-week.
      */
-    private int firstDayOfWeek;
+    private final int firstDayOfWeek;
 
     /**
      * The range used for selecting years.
@@ -107,7 +97,7 @@ public class DateChooserPanel extends JPanel implements ActionListener {
     /**
      * The font used to display the date.
      */
-    private Font dateFont = new Font("SansSerif", Font.PLAIN, 10);
+    private final Font dateFont = new Font("SansSerif", Font.PLAIN, 10);
 
     /**
      * A combo for selecting the month.
@@ -139,7 +129,7 @@ public class DateChooserPanel extends JPanel implements ActionListener {
      * The ordered set of all seven days of a week,
      * beginning with the 'firstDayOfWeek'.
      */
-    private int[] WEEK_DAYS;
+    private final int[] WEEK_DAYS;
 
     /**
      * Constructs a new date chooser panel, using today's date as the initial 
@@ -219,10 +209,10 @@ public class DateChooserPanel extends JPanel implements ActionListener {
             // day.  But if the selected day is 29, 30 or 31 and the newly
             // selected month doesn't have that many days, we revert to the 
             // last day of the newly selected month...
-            int dayOfMonth = this.chosenDate.get(Calendar.DAY_OF_MONTH);
+            final int dayOfMonth = this.chosenDate.get(Calendar.DAY_OF_MONTH);
             this.chosenDate.set(Calendar.DAY_OF_MONTH, 1);
             this.chosenDate.set(Calendar.MONTH, c.getSelectedIndex());
-            int maxDayOfMonth = this.chosenDate.getActualMaximum(
+            final int maxDayOfMonth = this.chosenDate.getActualMaximum(
                     Calendar.DAY_OF_MONTH);
             this.chosenDate.set(Calendar.DAY_OF_MONTH, Math.min(dayOfMonth, 
                     maxDayOfMonth));
@@ -237,10 +227,10 @@ public class DateChooserPanel extends JPanel implements ActionListener {
                 // selected day.  But if the selected day is Feb 29, and the
                 // newly selected year is not a leap year, we revert to 
                 // Feb 28...
-                int dayOfMonth = this.chosenDate.get(Calendar.DAY_OF_MONTH);
+                final int dayOfMonth = this.chosenDate.get(Calendar.DAY_OF_MONTH);
                 this.chosenDate.set(Calendar.DAY_OF_MONTH, 1);
                 this.chosenDate.set(Calendar.YEAR, y.intValue());
-                int maxDayOfMonth = this.chosenDate.getActualMaximum(
+                final int maxDayOfMonth = this.chosenDate.getActualMaximum(
                     Calendar.DAY_OF_MONTH);
                 this.chosenDate.set(Calendar.DAY_OF_MONTH, Math.min(dayOfMonth, 
                     maxDayOfMonth));
@@ -420,7 +410,7 @@ public class DateChooserPanel extends JPanel implements ActionListener {
         final int minMonth = this.chosenDate.getMinimum(Calendar.MONTH);
         final int maxMonth = this.chosenDate.getMaximum(Calendar.MONTH);
         final String[] months = new String[maxMonth - minMonth + 1];
-        System.arraycopy(SerialDate.getMonths(), minMonth, months, 0, 
+        System.arraycopy(DateUtil.getMonthNames(), minMonth, months, 0,
                 months.length);
 
         this.monthSelector = new JComboBox(months);

@@ -43,25 +43,18 @@
 
 package org.jfree.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import org.jfree.date.DayDate;
+import org.jfree.daydate.DateUtil;
+import org.jfree.daydate.DayDateFactory;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import org.jfree.date.SerialDate;
 
 /**
  * A panel that allows the user to select a date.
@@ -79,25 +72,25 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
     public static final Color DEFAULT_MONTH_BUTTON_COLOR = Color.lightGray;
 
     /** The date selected in the panel. */
-    private SerialDate date;
+    private DayDate date;
 
     /** The color for the selected date. */
-    private Color dateButtonColor;
+    private final Color dateButtonColor;
 
     /** The color for dates in the current month. */
-    private Color monthButtonColor;
+    private final Color monthButtonColor;
 
     /** The color for dates that are visible, but not in the current month. */
-    private Color chosenOtherButtonColor = Color.darkGray;
+    private final Color chosenOtherButtonColor = Color.darkGray;
 
     /** The first day-of-the-week. */
-    private int firstDayOfWeek = Calendar.SUNDAY;
+    private final int firstDayOfWeek = Calendar.SUNDAY;
 
     /** The range used for selecting years. */
-    private int yearSelectionRange = 20;
+    private final int yearSelectionRange = 20;
 
     /** The font used to display the date. */
-    private Font dateFont = new Font("SansSerif", Font.PLAIN, 10);
+    private final Font dateFont = new Font("SansSerif", Font.PLAIN, 10);
 
     /** A combo for selecting the month. */
     private JComboBox monthSelector = null;
@@ -119,7 +112,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      */
     public SerialDateChooserPanel() {
 
-        this(SerialDate.createInstance(new Date()), false,
+        this(DayDateFactory.makeDate(new Date()), false,
              DEFAULT_DATE_BUTTON_COLOR,
              DEFAULT_MONTH_BUTTON_COLOR);
 
@@ -132,7 +125,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      * @param controlPanel  a flag that indicates whether or not the 'today' button should
      *                      appear on the panel.
      */
-    public SerialDateChooserPanel(final SerialDate date, final boolean controlPanel) {
+    public SerialDateChooserPanel(final DayDate date, final boolean controlPanel) {
 
         this(date, controlPanel,
              DEFAULT_DATE_BUTTON_COLOR,
@@ -148,7 +141,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      * @param dateButtonColor  the date button color.
      * @param monthButtonColor  the month button color.
      */
-    public SerialDateChooserPanel(final SerialDate date, final boolean controlPanel,
+    public SerialDateChooserPanel(final DayDate date, final boolean controlPanel,
                                   final Color dateButtonColor, final Color monthButtonColor) {
 
         super(new BorderLayout());
@@ -170,7 +163,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      *
      * @param date  the new date.
      */
-    public void setDate(final SerialDate date) {
+    public void setDate(final DayDate date) {
 
         this.date = date;
         this.monthSelector.setSelectedIndex(date.getMonth() - 1);
@@ -184,7 +177,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      *
      * @return the selected date.
      */
-    public SerialDate getDate() {
+    public DayDate getDate() {
         return this.date;
     }
 
@@ -197,8 +190,8 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
 
         if (e.getActionCommand().equals("monthSelectionChanged")) {
             final JComboBox c = (JComboBox) e.getSource();
-            this.date = SerialDate.createInstance(
-                this.date.getDayOfMonth(), c.getSelectedIndex() + 1, this.date.getYYYY()
+            this.date = DayDateFactory.make(
+                    this.date.getDayOfMonth(), c.getSelectedIndex() + 1, this.date.getYear()
             );
             refreshButtons();
         }
@@ -206,7 +199,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
             if (!this.refreshing) {
                 final JComboBox c = (JComboBox) e.getSource();
                 final Integer y = (Integer) c.getSelectedItem();
-                this.date = SerialDate.createInstance(
+                this.date = DayDateFactory.make(
                     this.date.getDayOfMonth(), this.date.getMonth(), y.intValue()
                 );
                 refreshYearSelector();
@@ -214,13 +207,13 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
             }
         }
         else if (e.getActionCommand().equals("todayButtonClicked")) {
-            setDate(SerialDate.createInstance(new Date()));
+            setDate(DayDateFactory.makeDate(new Date()));
         }
         else if (e.getActionCommand().equals("dateButtonClicked")) {
             final JButton b = (JButton) e.getSource();
             final int i = Integer.parseInt(b.getName());
-            final SerialDate first = getFirstVisibleDate();
-            final SerialDate selected = SerialDate.addDays(i, first);
+            final DayDate first = getFirstVisibleDate();
+            final DayDate selected = first.plusDays(i);
             setDate(selected);
         }
 
@@ -266,7 +259,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      *
      * @return the button color.
      */
-    protected Color getButtonColor(final SerialDate targetDate) {
+    protected Color getButtonColor(final DayDate targetDate) {
 
         if (this.date.equals(this.date)) {
             return this.dateButtonColor;
@@ -286,12 +279,13 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      *
      * @return the first visible date.
      */
-    protected SerialDate getFirstVisibleDate() {
+    protected DayDate getFirstVisibleDate() {
 
-        SerialDate result = SerialDate.createInstance(1, this.date.getMonth(), this.date.getYYYY());
-        result = SerialDate.addDays(-1, result);
-        while (result.getDayOfWeek() != getFirstDayOfWeek()) {
-            result = SerialDate.addDays(-1, result);
+        DayDate result = DayDateFactory.make(1, this.date.getMonth(), this.date.getYear());
+        result = result.plusDays(-1);
+        while (result.getDayOfWeek()
+                .toInt() != getFirstDayOfWeek()) {
+            result = result.plusDays(-1);
         }
         return result;
 
@@ -311,12 +305,12 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      */
     protected void refreshButtons() {
 
-        SerialDate current = getFirstVisibleDate();
+        DayDate current = getFirstVisibleDate();
         for (int i = 0; i < 42; i++) {
             final JButton button = this.buttons[i];
             button.setText(String.valueOf(current.getDayOfWeek()));
             button.setBackground(getButtonColor(current));
-            current = SerialDate.addDays(1, current);
+            current = current.plusDays(1);
         }
 
     }
@@ -329,11 +323,11 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
         if (!this.refreshing) {
             this.refreshing = true;
             this.yearSelector.removeAllItems();
-            final Vector v = getYears(this.date.getYYYY());
-            for (Enumeration e = v.elements(); e.hasMoreElements();) {
+            final Vector v = getYears(this.date.getYear());
+            for (final Enumeration e = v.elements(); e.hasMoreElements(); ) {
                 this.yearSelector.addItem(e.nextElement());
             }
-            this.yearSelector.setSelectedItem(new Integer(this.date.getYYYY()));
+            this.yearSelector.setSelectedItem(new Integer(this.date.getYear()));
             this.refreshing = false;
         }
     }
@@ -363,7 +357,7 @@ public class SerialDateChooserPanel extends JPanel implements ActionListener {
      */
     private JPanel constructSelectionPanel() {
         final JPanel p = new JPanel();
-        this.monthSelector = new JComboBox(SerialDate.getMonths());
+        this.monthSelector = new JComboBox(DateUtil.getMonthNames());
         this.monthSelector.addActionListener(this);
         this.monthSelector.setActionCommand("monthSelectionChanged");
         p.add(this.monthSelector);

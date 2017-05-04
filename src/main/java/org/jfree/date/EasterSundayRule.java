@@ -44,13 +44,15 @@
 
 package org.jfree.date;
 
+import org.jfree.daydate.DayDateFactory;
+
 /**
  * An annual date rule for Easter (Sunday).  The algorithm used here was
  * obtained from a Calendar FAQ which can be found at:
- * <P>
+ * <p>
  * <a href="http://www.tondering.dk/claus/calendar.html"
- *     >http://www.tondering.dk/claus/calendar.html</a>.
- * <P>
+ * >http://www.tondering.dk/claus/calendar.html</a>.
+ * <p>
  * It is based on an algorithm by Oudin (1940) and quoted in "Explanatory Supplement to the
  * Astronomical Almanac", P. Kenneth Seidelmann, editor.
  *
@@ -67,14 +69,13 @@ public class EasterSundayRule extends AnnualDateRule {
     /**
      * Returns the date of Easter Sunday for the given year.  See the class
      * description for the source of the algorithm.
-     * <P>
+     * <p>
      * This method supports the AnnualDateRule interface.
      *
-     * @param year  the year to check.
-     *
+     * @param year the year to check.
      * @return the date of Easter Sunday for the given year.
      */
-    public SerialDate getDate(final int year) {
+    public DayDate getDate(final int year) {
         final int g = year % 19;
         final int c = year / 100;
         final int h = (c - c / 4 - (8 * c + 13) / 25 + 19 * g + 15) % 30;
@@ -83,7 +84,7 @@ public class EasterSundayRule extends AnnualDateRule {
         final int l = i - j;
         final int month = 3 + (l + 40) / 44;
         final int day = l + 28 - 31 * (month / 4);
-        return SerialDate.createInstance(day, month, year);
+        return DayDateFactory.make(day, month, year);
     }
 
 }

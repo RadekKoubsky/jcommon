@@ -12,3 +12,6 @@
 
 # Build directory #
 /target
+
+.idea
+*.iml

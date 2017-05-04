@@ -43,167 +43,173 @@
 
 package org.jfree.date;
 
+import org.jfree.daydate.Day;
+import org.jfree.daydate.WeekdayRange;
+
+import static org.jfree.daydate.Day.MONDAY;
+import static org.jfree.daydate.WeekdayRange.NEXT;
+
 /**
  * An annual date rule that returns a date for each year based on (a) a
  * reference rule; (b) a day of the week; and (c) a selection parameter
  * (SerialDate.PRECEDING, SerialDate.NEAREST, SerialDate.FOLLOWING).
- * <P>
- * For example, Good Friday can be specified as 'the Friday PRECEDING Easter 
+ * <p>
+ * For example, Good Friday can be specified as 'the Friday PRECEDING Easter
  * Sunday'.
  *
  * @author David Gilbert
  */
 public class RelativeDayOfWeekRule extends AnnualDateRule {
 
-    /** A reference to the annual date rule on which this rule is based. */
-    private AnnualDateRule subrule;
+	/**
+	 * A reference to the annual date rule on which this rule is based.
+	 */
+	private AnnualDateRule subrule;
 
-    /** 
-     * The day of the week (SerialDate.MONDAY, SerialDate.TUESDAY, and so on). 
-     */
-    private int dayOfWeek;
+	/**
+	 * The day of the week (SerialDate.MONDAY, SerialDate.TUESDAY, and so on).
+	 */
+	private int dayOfWeek;
 
-    /** Specifies which day of the week (PRECEDING, NEAREST or FOLLOWING). */
-    private int relative;
+	/**
+	 * Specifies which day of the week (PRECEDING, NEAREST or FOLLOWING).
+	 */
+	private WeekdayRange relative;
 
-    /**
-     * Default constructor - builds a rule for the Monday following 1 January.
-     */
-    public RelativeDayOfWeekRule() {
-        this(new DayAndMonthRule(), SerialDate.MONDAY, SerialDate.FOLLOWING);
-    }
+	/**
+	 * Default constructor - builds a rule for the Monday following 1 January.
+	 */
+	public RelativeDayOfWeekRule() {
+		this(new DayAndMonthRule(), MONDAY.toInt(), NEXT);
+	}
 
-    /**
-     * Standard constructor - builds rule based on the supplied sub-rule.
-     *
-     * @param subrule  the rule that determines the reference date.
-     * @param dayOfWeek  the day-of-the-week relative to the reference date.
-     * @param relative  indicates *which* day-of-the-week (preceding, nearest 
-     *                  or following).
-     */
-    public RelativeDayOfWeekRule(final AnnualDateRule subrule, 
-            final int dayOfWeek, final int relative) {
-        this.subrule = subrule;
-        this.dayOfWeek = dayOfWeek;
-        this.relative = relative;
-    }
+	/**
+	 * Standard constructor - builds rule based on the supplied sub-rule.
+	 *
+	 * @param subrule   the rule that determines the reference date.
+	 * @param dayOfWeek the day-of-the-week relative to the reference date.
+	 * @param relative  indicates *which* day-of-the-week (preceding, nearest
+	 *                  or following).
+	 */
+	public RelativeDayOfWeekRule(final AnnualDateRule subrule,
+			final int dayOfWeek, final WeekdayRange relative) {
+		this.subrule = subrule;
+		this.dayOfWeek = dayOfWeek;
+		this.relative = relative;
+	}
 
-    /**
-     * Returns the sub-rule (also called the reference rule).
-     *
-     * @return The annual date rule that determines the reference date for this 
-     *         rule.
-     */
-    public AnnualDateRule getSubrule() {
-        return this.subrule;
-    }
+	/**
+	 * Returns the sub-rule (also called the reference rule).
+	 *
+	 * @return The annual date rule that determines the reference date for this
+	 * rule.
+	 */
+	public AnnualDateRule getSubrule() {
+		return this.subrule;
+	}
 
-    /**
-     * Sets the sub-rule.
-     *
-     * @param subrule  the annual date rule that determines the reference date 
-     *                 for this rule.
-     */
-    public void setSubrule(final AnnualDateRule subrule) {
-        this.subrule = subrule;
-    }
+	/**
+	 * Sets the sub-rule.
+	 *
+	 * @param subrule the annual date rule that determines the reference date
+	 *                for this rule.
+	 */
+	public void setSubrule(final AnnualDateRule subrule) {
+		this.subrule = subrule;
+	}
 
-    /**
-     * Returns the day-of-the-week for this rule.
-     *
-     * @return the day-of-the-week for this rule.
-     */
-    public int getDayOfWeek() {
-        return this.dayOfWeek;
-    }
+	/**
+	 * Returns the day-of-the-week for this rule.
+	 *
+	 * @return the day-of-the-week for this rule.
+	 */
+	public int getDayOfWeek() {
+		return this.dayOfWeek;
+	}
 
-    /**
-     * Sets the day-of-the-week for this rule.
-     *
-     * @param dayOfWeek  the day-of-the-week (SerialDate.MONDAY, 
-     *                   SerialDate.TUESDAY, and so on).
-     */
-    public void setDayOfWeek(final int dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
+	/**
+	 * Sets the day-of-the-week for this rule.
+	 *
+	 * @param dayOfWeek the day-of-the-week (SerialDate.MONDAY,
+	 *                  SerialDate.TUESDAY, and so on).
+	 */
+	public void setDayOfWeek(final int dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
 
-    /**
-     * Returns the 'relative' attribute, that determines *which* 
-     * day-of-the-week we are interested in (SerialDate.PRECEDING, 
-     * SerialDate.NEAREST or SerialDate.FOLLOWING).
-     *
-     * @return The 'relative' attribute.
-     */
-    public int getRelative() {
-        return this.relative;
-    }
+	/**
+	 * Returns the 'relative' attribute, that determines *which*
+	 * day-of-the-week we are interested in (SerialDate.PRECEDING,
+	 * SerialDate.NEAREST or SerialDate.FOLLOWING).
+	 *
+	 * @return The 'relative' attribute.
+	 */
+	public WeekdayRange getRelative() {
+		return this.relative;
+	}
 
-    /**
-     * Sets the 'relative' attribute (SerialDate.PRECEDING, SerialDate.NEAREST,
-     * SerialDate.FOLLOWING).
-     *
-     * @param relative  determines *which* day-of-the-week is selected by this 
-     *                  rule.
-     */
-    public void setRelative(final int relative) {
-        this.relative = relative;
-    }
+	/**
+	 * Sets the 'relative' attribute (SerialDate.PRECEDING, SerialDate.NEAREST,
+	 * SerialDate.FOLLOWING).
+	 *
+	 * @param relative determines *which* day-of-the-week is selected by this
+	 *                 rule.
+	 */
+	public void setRelative(final WeekdayRange relative) {
+		this.relative = relative;
+	}
 
-    /**
-     * Creates a clone of this rule.
-     *
-     * @return a clone of this rule.
-     *
-     * @throws CloneNotSupportedException this should never happen.
-     */
-    public Object clone() throws CloneNotSupportedException {
-        final RelativeDayOfWeekRule duplicate 
-            = (RelativeDayOfWeekRule) super.clone();
-        duplicate.subrule = (AnnualDateRule) duplicate.getSubrule().clone();
-        return duplicate;
-    }
+	/**
+	 * Creates a clone of this rule.
+	 *
+	 * @return a clone of this rule.
+	 * @throws CloneNotSupportedException this should never happen.
+	 */
+	public Object clone() throws CloneNotSupportedException {
+		final RelativeDayOfWeekRule duplicate
+				= (RelativeDayOfWeekRule) super.clone();
+		duplicate.subrule = (AnnualDateRule) duplicate.getSubrule()
+				.clone();
+		return duplicate;
+	}
 
-    /**
-     * Returns the date generated by this rule, for the specified year.
-     *
-     * @param year  the year (1900 &lt;= year &lt;= 9999).
-     *
-     * @return The date generated by the rule for the given year (possibly 
-     *         <code>null</code>).
-     */
-    public SerialDate getDate(final int year) {
+	/**
+	 * Returns the date generated by this rule, for the specified year.
+	 *
+	 * @param year the year (1900 &lt;= year &lt;= 9999).
+	 * @return The date generated by the rule for the given year (possibly
+	 * <code>null</code>).
+	 */
+	public DayDate getDate(final int year) {
 
-        // check argument...
-        if ((year < SerialDate.MINIMUM_YEAR_SUPPORTED)
-            || (year > SerialDate.MAXIMUM_YEAR_SUPPORTED)) {
-            throw new IllegalArgumentException(
-                "RelativeDayOfWeekRule.getDate(): year outside valid range.");
-        }
+		// check argument...
+		if ((year < SpreadsheetDate.MINIMUM_YEAR_SUPPORTED)
+				|| (year > SpreadsheetDate.MAXIMUM_YEAR_SUPPORTED)) {
+			throw new IllegalArgumentException(
+					"RelativeDayOfWeekRule.getDate(): year outside valid range.");
+		}
 
-        // calculate the date...
-        SerialDate result = null;
-        final SerialDate base = this.subrule.getDate(year);
+		// calculate the date...
+		DayDate result = null;
+		final DayDate base = this.subrule.getDate(year);
 
-        if (base != null) {
-            switch (this.relative) {
-                case(SerialDate.PRECEDING):
-                    result = SerialDate.getPreviousDayOfWeek(this.dayOfWeek, 
-                            base);
-                    break;
-                case(SerialDate.NEAREST):
-                    result = SerialDate.getNearestDayOfWeek(this.dayOfWeek, 
-                            base);
-                    break;
-                case(SerialDate.FOLLOWING):
-                    result = SerialDate.getFollowingDayOfWeek(this.dayOfWeek, 
-                            base);
-                    break;
-                default:
-                    break;
-            }
-        }
-        return result;
+		if (base != null) {
+			switch (this.relative) {
+				case LAST:
+					result = base.getPreviousDayOfWeek(Day.fromInt(this.dayOfWeek));
+					break;
+				case NEAREST:
+					result = base.getNearestDayOfWeek(Day.fromInt(this.dayOfWeek));
+					break;
+				case NEXT:
+					result = base.getFollowingDayOfWeek(Day.fromInt(this.dayOfWeek));
+					break;
+				default:
+					break;
+			}
+		}
+		return result;
 
-    }
+	}
 
 }
